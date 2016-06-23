@@ -1,0 +1,11 @@
+{
+  "name": "kyle-jennings/tidy-templates",
+  "description": "Enhance Wordpress's template hierarchy and change your template location",
+  "homepage": "https://github.com/kyle-jennings/tidy-templates",
+  "type": "wordpress-muplugin",
+  "extra": {
+    "branch-alias": {
+      "dev-composer": "dev-master"
+    }
+  }
+}
