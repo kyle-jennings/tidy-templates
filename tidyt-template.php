@@ -60,7 +60,9 @@ function tidyt_get_template($templates = array() ){
 
     // find and load the template
     $template = tidyt_locate_file($templates, $path);
-    include($template);
+
+    if( tidyt_template_exists($template) )
+      include($template);
 }
 
 /**

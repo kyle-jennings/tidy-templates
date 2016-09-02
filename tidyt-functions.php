@@ -308,7 +308,16 @@ function tidyt_get_attachement_template_functions(){
 }
 
 
+function tidyt_template_exists($tempalte){
+  if(!file_exists($template))
+    return false;
+}
 
+    
+function tidyt_configured(){
+  if( !defined('WP_TEMPLATE_DIRECTORY') )
+    exit('<h1>WP_TEMPLATE_DIRECTORY was not defined.</h1>  Add it to your wp-config.php file!');
+}
 
 
 
@@ -319,6 +328,9 @@ function tidyt_get_attachement_template_functions(){
  * @return [type] [description]
  */
 function tidyt_template($log = 'log--silent', $render = 'render-templates'){
+
+    tidyt_configured();
+
     if( is_404() )
         $templates = array('404.php');
     elseif( is_search() )
