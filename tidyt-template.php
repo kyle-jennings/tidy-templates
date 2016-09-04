@@ -63,6 +63,8 @@ function tidyt_get_template($templates = array() ){
 
     if( tidyt_template_exists($template) )
       include($template);
+
+    die;
 }
 
 /**
@@ -72,7 +74,11 @@ function tidyt_get_template($templates = array() ){
  * the data should be an associatve array which gets unpacked, but you could pass in a
  * single variable too.
  */
-function tidyt_render($files = array(), $data = array() ) {
+function tidyt_render($files = array(), $data = array(), $base = null ) {
+    $path = debug_backtrace();
+
+    if(tidyt_from_controller($path))
+        tidyt_base($files, $data);
 
     // extracts the packed up data
     if(is_array($data))
@@ -85,12 +91,47 @@ function tidyt_render($files = array(), $data = array() ) {
     }
 
     $path = tidyt_get_constant_path('VIEWS');
-
     // find and load the template
-    $template = tidyt_locate_file($files, $path, $data);
+    $template = tidyt_locate_file($files, $path);
+
     include($template);
 }
 
+/**
+ * Checks to see if tidyt_render was called from the template Directory
+ * as opposed to the views. This allows us to use the same function both for
+ * partials and for building the initial view with a base template
+ * @return [type] [description]
+ */
+function tidyt_from_controller($path){
+
+    $path = $path[0]['file'];
+    $path = pathinfo($path);
+    $path = explode('/', $path['dirname']);
+    $path = $path[count($path)-1];
+
+    if($path === WP_TEMPLATE_DIRECTORY)
+        return true;
+    else
+        return false;
+}
+
+
+function tidyt_base($template, $data = array() ){
+
+    if( !defined('WP_BASE_TEMPLATES') )
+        return false;
+
+    $files = strpos(WP_BASE_TEMPLATES, ',') ? implode(',',WP_BASE_TEMPLATES) : array(WP_BASE_TEMPLATES);
+    $base_path = defined('WP_BASE_DIRECTORY') ? WP_BASE_DIRECTORY : '';
+    $path = tidyt_get_constant_path('VIEWS')  . $base_path . '/';
+    $base_template = tidyt_locate_file($files, $path);
+    if( !$base_template )
+        return;
+
+    include($base_template);
+    die;
+}
 
 /**
  * This checks to see if the WP_{*}_DIRECTORY constant was set.  This constant
