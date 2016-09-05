@@ -308,6 +308,11 @@ function tidyt_get_attachement_template_functions(){
 }
 
 
+/**
+ * If the template is not found we need to do something
+ * @param  [type] $template [description]
+ * @return [type]           [description]
+ */
 function tidyt_template_exists($template){
     if(!file_exists($template))
         return false;
@@ -315,12 +320,31 @@ function tidyt_template_exists($template){
     return true;
 }
 
-
+/**
+ * Check to see whether or not the WP_TEMPLATE_DIRECTORY constant was set
+ * and display a warning if it has not.
+ * @return [type] [description]
+ */
 function tidyt_configured(){
   if( !defined('WP_TEMPLATE_DIRECTORY') )
     exit('<h1>WP_TEMPLATE_DIRECTORY was not defined.</h1>  Add it to your wp-config.php file!');
 }
 
+
+/**
+ * If arguments are passed in, we need to set these in the global scope to use
+ * later. Possible args are things like nav bars, site name, ect ect
+ *
+ * Not sure if this is the route I want to take
+ * @param [type] $args [description]
+ */
+function tidyt_set_global_settings($args = array()) {
+
+    $GLOBALS['tidyt_args'] = $args;
+    // foreach($args as $key=>$value){
+    // }
+
+}
 
 
 /**
@@ -329,7 +353,9 @@ function tidyt_configured(){
  * This starts to build the template tree
  * @return [type] [description]
  */
-function tidyt_template($log = 'log--silent', $render = 'render-templates'){
+function tidyt_template($log = 'log--silent', $render = 'render-templates', $args = array() ){
+
+    tidyt_set_global_settings($args);
 
     tidyt_configured();
 
@@ -371,6 +397,8 @@ function tidyt_template($log = 'log--silent', $render = 'render-templates'){
         tidyt_get_template($templates);
 
 }
+
+
 function kjd_identify_template($log = 'log--silent', $render = 'render-templates'){
     tidyt_template($log, $render);
 }

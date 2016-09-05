@@ -41,7 +41,10 @@ function tidyt_locate_file( $files = array(), $path = '' ){
  * first found file.
  */
 function tidyt_get_template($templates = array() ){
+
     global $posts, $post, $wp_did_header, $wp_query, $wp_rewrite, $wpdb, $wp_version, $wp, $id, $comment, $user_ID;
+    $GLOBALS['templates'] = $templates;
+
     if ( is_array( $wp_query->query_vars ) ) {
         extract( $wp_query->query_vars, EXTR_SKIP );
     }
@@ -64,8 +67,10 @@ function tidyt_get_template($templates = array() ){
     if( tidyt_template_exists($template) )
       include($template);
 
+    // end the script once a template is loaded
     die;
 }
+
 
 /**
  * loads the view or partial
@@ -75,6 +80,40 @@ function tidyt_get_template($templates = array() ){
  * single variable too.
  */
 function tidyt_render($files = array(), $data = array(), $base = null ) {
+
+    // extracts the packed up data
+    if(is_array($data))
+        extract($data);
+
+    // if a string (single) view is supplied, throw it into an empty array
+    // that way we can use the same code
+    if(is_string($files)){
+        $files = array($files);
+    }
+
+    $path = tidyt_get_constant_path('VIEWS');
+    // find and load the template
+    $template = tidyt_locate_file($files, $path);
+
+    include($template);
+}
+
+
+
+/**
+ * Automatically finds and loads view files which match the controller
+ * For example. If the archive.php controller is loaded, then this loads the
+ * archive.php view
+ *
+ * if the base directory and basefiles constants are defined, then this loads
+ * the base templates to load the view into
+ * @param  [array] $data [packaged up data from the controller]
+ * @return [type]       [description]
+ */
+function tidyt_view($data){
+
+    $files = $GLOBALS['templates'];
+
     $path = debug_backtrace();
 
     if(tidyt_from_controller($path))
@@ -95,7 +134,11 @@ function tidyt_render($files = array(), $data = array(), $base = null ) {
     $template = tidyt_locate_file($files, $path);
 
     include($template);
+
+    // end the script once the view is loaded
+    die;
 }
+
 
 /**
  * Checks to see if tidyt_render was called from the template Directory
