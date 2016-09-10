@@ -16,8 +16,8 @@ $files = array(
     'comments',
     'search-form'
 );
-foreach($files as $file)
-    require_once('tidyt-'.$file.'.php');
+// foreach($files as $file)
+//     require_once('tidyt-'.$file.'.php');
 
-
+require_once('class-tidyTemplates.php');
 defined( 'ABSPATH' ) or die();
