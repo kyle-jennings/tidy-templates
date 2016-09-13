@@ -67,6 +67,15 @@ function tidyt_get_template($templates = array() ){
     if( tidyt_template_exists($template) )
       include($template);
 
+    if( WP_AUTOLOAD ){
+        // get the path to the template files
+        $path = tidyt_get_constant_path('VIEWS');
+
+        // find and load the template
+        $template = tidyt_locate_file($templates, $path);
+        include($template);
+    }
+
     // end the script once a template is loaded
     die;
 }
@@ -80,6 +89,11 @@ function tidyt_get_template($templates = array() ){
  * single variable too.
  */
 function tidyt_render($files = array(), $data = array(), $base = null ) {
+
+    $path = debug_backtrace();
+    $from_controller = tidyt_from_controller($path);
+    if($from_controller && WP_AUTOLOAD)
+        return;
 
     // extracts the packed up data
     if(is_array($data))
@@ -116,27 +130,32 @@ function tidyt_view($data){
 
     $path = debug_backtrace();
 
-    if(tidyt_from_controller($path))
+    $from_controller = tidyt_from_controller($path);
+    if($from_controller && !WP_AUTOLOAD)
         tidyt_base($files, $data);
+    elseif($from_controller && WP_AUTOLOAD)
+        return;
+    else
+        tidyt_render($templates, $data);
 
-    // extracts the packed up data
-    if(is_array($data))
-        extract($data);
-
-    // if a string (single) view is supplied, throw it into an empty array
-    // that way we can use the same code
-    if(is_string($files)){
-        $files = array($files);
-    }
-
-    $path = tidyt_get_constant_path('VIEWS');
-    // find and load the template
-    $template = tidyt_locate_file($files, $path);
-
-    include($template);
-
-    // end the script once the view is loaded
-    die;
+    // // extracts the packed up data
+    // if(is_array($data))
+    //     extract($data);
+    //
+    // // if a string (single) view is supplied, throw it into an empty array
+    // // that way we can use the same code
+    // if(is_string($files)){
+    //     $files = array($files);
+    // }
+    //
+    // $path = tidyt_get_constant_path('VIEWS');
+    // // find and load the template
+    // $template = tidyt_locate_file($files, $path);
+    //
+    // include($template);
+    //
+    // // end the script once the view is loaded
+    // die;
 }
 
 
