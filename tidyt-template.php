@@ -69,24 +69,16 @@ function tidyt_get_template($templates = array() ){
 
     $auto_load = tidyt_autoload();
 
-    if($auto_load == false)
+    if($auto_load !== true)
         die;
 
-    if( $auto_load === 'view' ){
+    if( $auto_load === true ){
         // get the path to the template files
         $path = tidyt_get_constant_path('VIEWS');
         // find and load the template
         $template = tidyt_locate_file($templates, $path);
         include($template);
 
-    }elseif( $auto_load === 'view_base' ){
-
-        $template = $templates;
-
-        $base_template = get_view_settings();
-        if(!$base_template);
-
-        include($base_template);
     }
 
     // end the script once a template is loaded
@@ -94,30 +86,12 @@ function tidyt_get_template($templates = array() ){
 }
 
 
-function get_view_settings(){
-
-    $files = strpos(WP_BASE_TEMPLATES, ',') ? implode(',',WP_BASE_TEMPLATES) : array(WP_BASE_TEMPLATES);
-    $base_path = defined('WP_BASE_DIRECTORY') ? WP_BASE_DIRECTORY : '';
-    $path = tidyt_get_constant_path('VIEWS')  . $base_path . '/';
-    $base_template = tidyt_locate_file($files, $path);
-    if( !$base_template )
-        return false;
-
-    return $base_template;
-}
-
-
 function tidyt_autoload(){
     if(!defined('WP_AUTOLOAD') )
         return false;
 
-    return 'view';
-    // the view base concept is broken for now, need to figure out the logisitics
-    // of how this will work
-    if( defined('WP_BASE_DIRECTORY'))
-        return 'view_base';
-    else
-        return 'view';
+    return true;
+
 }
 
 /**
@@ -151,30 +125,6 @@ function tidyt_render($files = array(), $data = array(), $base = null ) {
 }
 
 
-
-/**
- * Automatically finds and loads view files which match the controller
- * For example. If the archive.php controller is loaded, then this loads the
- * archive.php view
- *
- * if the base directory and basefiles constants are defined, then this loads
- * the base templates to load the view into
- * @param  [array] $data [packaged up data from the controller]
- * @return [type]       [description]
- */
-function tidyt_view($data){
-
-    $files = $GLOBALS['templates'];
-
-    $path = debug_backtrace();
-
-    $from_controller = tidyt_from_controller($path);
-    if($from_controller && defined('WP_BASE_TEMPLATES'))
-        tidyt_base($files, $data);
-
-}
-
-
 /**
  * Checks to see if tidyt_render was called from the template Directory
  * as opposed to the views. This allows us to use the same function both for
@@ -194,28 +144,6 @@ function tidyt_from_controller($path){
         return false;
 }
 
-
-/**
- * Loads the base view
- * @param  [type] $template [description]
- * @param  array  $data     [description]
- * @return [type]           [description]
- */
-function tidyt_base($template, $data = array() ){
-
-    // havent figured out hte best way to do this yet
-    return;
-
-    if( !defined('WP_BASE_TEMPLATES') )
-        return false;
-
-    $base_template = get_view_settings();
-    if(!$base_template);
-        return false;
-
-    include($base_template);
-    die;
-}
 
 
 /**
@@ -259,12 +187,14 @@ function tidyt_build_template_part($slug, $name = null){
     tidyt_get_template( $templates );
 }
 
+
 /**
  * Loads a template part - only useful in the templates(controllers)
  */
 function tidyt_get_template_part($slug, $name = null){
     tidyt_build_template_part($slug, $name);
 }
+
 
 /**
  * Loads a sidebar, uses a prefix for specific loading
@@ -273,12 +203,14 @@ function tidyt_get_sidebar($name = null){
     tidyt_build_template_part('sidebar', $name);
 }
 
+
 /**
  * Loads a footer, uses a prefix for specific loading
  */
 function tidyt_get_footer($name = null){
     tidyt_build_template_part('footer', $name);
 }
+
 
 /**
  * Loads a header, uses a prefix for specific loading

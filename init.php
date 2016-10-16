@@ -13,7 +13,6 @@ $files = array(
     'helpers',
     'template',
     'functions',
-    'comments',
     'search-form'
 );
 foreach($files as $file)
