@@ -103,7 +103,7 @@ function tidyt_autoload(){
  * the data should be an associatve array which gets unpacked, but you could pass in a
  * single variable too.
  */
-function tidyt_render($files = array(), $data = array(), $base = null ) {
+function tidyt_render($files = array(), $data = array()) {
 
     $from_controller = tidyt_from_controller($path);
     if($from_controller && WP_AUTOLOAD)
