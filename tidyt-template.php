@@ -67,6 +67,8 @@ function tidyt_get_template($templates = array() ){
     if( tidyt_template_exists($template) )
       include($template);
 
+
+
     $auto_load = tidyt_autoload();
 
     if($auto_load !== true)

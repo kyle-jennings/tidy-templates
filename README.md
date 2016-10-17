@@ -95,13 +95,13 @@ Now create a folder in your theme root called **"templates"** and throw your tem
 Then, in your theme root index.php file, you'll need to call the function to make the magic happen:
 
 ```
-if( function_exists('tidyt_identify_template') )
-    tidyt_identify_template();
+if( function_exists('tidyt_template') )
+    tidyt_template();
 ```
 
-And that's it. If the plugin finds the defined directory, then it will look for your template files there. Otherwise it will fallback on using the default location (the theme root).
+And that's it. If the plugin finds the defined directory, then it will look for your template files there. Otherwise it will fall back on using the default location (the theme root).
 
-This plugin follows Wordpress's rules for the template hirearchy, so if your template isnt found it will use the standard fallbacks.
+This plugin follows Wordpress's rules for the template hirearchy, so if your template isn't found it will use the standard fall backs.
 
 Rendering Views
 ================
@@ -111,12 +111,31 @@ This plugin can be used to create a MVC type of setup. The easiest way to do thi
 
 And then in your template files, call the view with:
 ```
-tidyt_render_view( array('file-name1','file-name2','file-name3'), $data  );
+tidyt_render( array('file-name1','file-name2','file-name3'), $data  );
 ```
 or
 ```
-tidyt_render_view( 'file-name', $data  );
+tidyt_render( 'file-name', $data  );
 ```
 
-The $data variable should be an associative array containing all the data you want to output into the view. tidyt_render_view() will extract the $data array into respective variables to display in the view. Tutorials to come.
+The $data variable should be an associative array containing all the data you want to output into the view. tidyt_render() will extract the $data array into respective variables to display in the view. Tutorials to come.
 
+## Autoloading Views
+
+You can also autoload your views (instead of calling the view form the controller with the tidyt_render function) by adding yet another constant in the wp-config file:
+
+``` define('WP_AUTOLOAD', true) ```
+
+Things get a little different here.
+
+#### View filenames
+Your view filenames must now match the controller filename (standard WordPress template filenames), these files will get included in when loading the template controllers.
+
+#### Packaging up you data
+While you still need to declare your variables, you cannot package them up. The view files will now be in the same scope as the controller so the variables will be available in the view automatically.
+
+
+## Future Features
+1. Option to automatically wrap templates or views with header and footer files (essentially a template base)
+2. Maybe inject the settings (template locations, view locations, autoload ect ect) in the tidy_template() function
+3. Refactor this thing as a static class
