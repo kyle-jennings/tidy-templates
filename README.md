@@ -40,16 +40,18 @@ By moving the template files into their own folder, the root of our themes could
 
 ```
 ├── theme-name/
-|   ├── lib/
-|   |   ├── function files
-|   ├── css/
-|   ├── js
-|   ├── templates
-|   |   ├── index.php
-|   |   ├── archive.php
-|   |   ├── single.php
-|   |   ├── page.php
-|   |   ├── ect.php
+|───lib/
+|   ├── function files
+|
+|── css/
+|── js/
+|
+|── controllers/
+|   ├── index.php
+|   ├── archive.php
+|   ├── single.php
+|   ├── page.php
+|   ├── ect.php
 |
 ├── style.css
 ├── index.php
@@ -105,11 +107,46 @@ This plugin follows Wordpress's rules for the template hirearchy, so if your tem
 
 Rendering Views
 ================
-This plugin can be used to create a MVC type of setup. The easiest way to do this is by adding another constant to the wp-config file:
+This plugin can be used to create a MVC type of setup, a separation of presentation and logic.  With this setup, we can collect the data (and handle all the messy login) we want to display in a "controller" and send it to a "view" to display it.  That might look like this:
+
+
+
+```
+├── theme-name/
+|───lib/
+|   ├── function files
+|
+|── css/
+|── js/
+|
+|── controllers/
+|   ├── index.php
+|   ├── archive.php
+|   ├── single.php
+|   ├── page.php
+|   ├── ect.php
+|
+|
+|───views/
+|   ├── index.php
+|   |── archive.php
+|   |── single.php
+|   |── page.php
+|   |── ect.php
+|
+├── style.css
+├── index.php
+├── functions.php
+```
+
+
+
+The easiest way to do this is by adding another constant to the wp-config file:
 
 ```define('WP_VIEWS_DIRECTORY', 'views');```
 
 And then in your template files, call the view with:
+
 ```
 tidyt_render( array('file-name1','file-name2','file-name3'), $data  );
 ```
