@@ -79,6 +79,7 @@ function tidyt_get_template($templates = array() ){
         $path = tidyt_get_constant_path('VIEWS');
         // find and load the template
         $template = tidyt_locate_file($templates, $path);
+
         include($template);
 
     }
@@ -103,15 +104,21 @@ function tidyt_autoload(){
  * the data should be an associatve array which gets unpacked, but you could pass in a
  * single variable too.
  */
-function tidyt_render($files = array(), $data = array()) {
+function tidyt_render($files = array(), $data = array(), $rename_data = null) {
 
     $from_controller = tidyt_from_controller($path);
     if($from_controller && WP_AUTOLOAD)
         return;
 
     // extracts the packed up data
-    if(is_array($data))
+    if(is_array($data)){
         extract($data);
+        unset($data);
+    }elseif($rename_data && $data) {
+        ${$rename_data} = $data;
+        unset($data);
+    }
+
 
     // if a string (single) view is supplied, throw it into an empty array
     // that way we can use the same code
@@ -164,6 +171,7 @@ function tidyt_get_constant_path($constant){
     // get the constant's value
     $path = constant($constant);
     // if the path exists then return it
+
     if( file_exists( STYLESHEETPATH . '/' . $path)  ){
         return $path. '/';
     } else if ( file_exists(TEMPLATEPATH . '/' . $path)) {
