@@ -61,6 +61,21 @@ function tidyt_get_template($templates = array() ){
     // get the path to the template files
     $path = tidyt_get_constant_path('TEMPLATE');
 
+
+    /**
+    * Filter the list of templates that should be passed to locate_template().
+    *
+    * The last element in the array should always be the fallback template for this query type.
+    *
+    * Possible values for `$type` include: 'index', '404', 'archive', 'author', 'category', 'tag', 'taxonomy', 'date',
+    * 'home', 'front_page', 'page', 'paged', 'search', 'single', 'singular', and 'attachment'.
+    *
+    * @since 4.4.0
+    *
+    * @param array $templates A list of template candidates, in descending order of priority.
+    */
+    $templates = apply_filters( "{$type}_template_hierarchy", $templates ); 
+
     // find and load the template
     $template = tidyt_locate_file($templates, $path);
 
